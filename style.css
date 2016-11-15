@@ -1,0 +1,44 @@
+body {
+      background-color: #EFEDE5;
+    }
+
+form {
+      margin: 0 auto;
+      width: 75%;
+    }
+
+td {
+      padding: 5px;
+    }
+
+.divcent {
+      display: block;
+      position: relative;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+.cent {
+      margin: 0 auto;
+      width: 75%;
+    }
+    
+#cont {
+      border-style: solid;
+      border-size: 2px;
+      background-color: #FFFFFF;
+    }
+
+#gislogo {
+      position: relative;
+      right: 5px;
+      padding: 5px;
+    }
+    
+#loading {
+      visibility: hidden;
+      display: block;
+      position: relative;
+      margin-left: auto;
+      margin-right: auto;
+    }

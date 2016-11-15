@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+  <title>GIS Address Lookup</title>
+
+  <!-- viewport for bootstrap mobile -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+  <!-- JQuery Plugin Uncompressed 3.1.0 -->
+  <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+
+  <!-- Latest compiled and minified CSS -->
+  <link rel="stylesheet" href="http://gis2.co.frederick.va.us/dev/bootstrap/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+
+  <!-- Optional theme -->
+  <link rel="stylesheet" href="http://gis2.co.frederick.va.us/dev/bootstrap/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
+
+  <!-- Latest compiled and minified JavaScript -->
+  <script src="http://gis2.co.frederick.va.us/dev/bootstrap/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+
+  <!-- ESRI JS API 4.0 -->
+  <script src="https://js.arcgis.com/4.0/"></script>
+
+  <!-- Main Stylesheet for app -->
+  <link rel="stylesheet" href="style.css">
+
+  <!-- JS for lookup -->
+  <script src="Lookup.js"></script>
+  
+</head>
+<body>
+  <div class="container-fluid cent" id="cont">
+    <div class="row">
+      <div class="col-md-10">
+        <h2><img id="gislogo" src="Transformed_GISnoar3.jpg" alt="GIS Logo"/>GIS Address Lookup</h2>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-10">
+        <p>Enter an address in the textbox and click "Find" to view which jurisdiction an address lies within. If no address is found, then the address, as entered, does not exist within our database. This will verify if an address lies within the Frederick County, Stephens City, or Middletown boundaries. Alternatively, type in a street name to return all addresses for that given street.</p>
+      </div>
+    </div>
+    <br>
+    <br>
+        <div class="row">
+        <div class="col-md-10">
+          <p><i>Address Format: House #, Street Name, Abbrv. Suffix (e.g. 1080 Coverstone Dr)</i></p>
+          <label class="sr-only" for="txtAddress">ADDRESS:  </label>
+          <input class="form-control" type="text" id="txtAddress" tabindex="1"/>
+          <br />
+          <input class="btn btn-lg btn-primary btn-block" type="button" value="Find" id="btnFind" tabindex="2"/> <img id="loading" src="ajax-loader.gif">
+          <!--<button class="btn btn-lg btn-primary btn-block" type="submit" id="btnFind">Verify</button>-->
+        </div>
+      </div>
+    <br>
+  <div class="row">
+    <div class="col-md-20">
+      <table class="table" id="tblAddress"></table>
+    </div>
+  </div>
+</div>
+</body>
+</html>
