@@ -30,8 +30,11 @@
         url: "http://gis2.co.frederick.va.us/arcgisweb/rest/services/FC_GIS/TextAddressLookup_COR/MapServer/1"
       });
 
-      // Executes on each button click
+
+
+      // Called on each button click
       function doFind() {
+
         // Display loading gif to provide the user feedback on search progress
         loadingImg.style.visibility = "visible";
         // Set the search text to the value of the input box
@@ -42,51 +45,65 @@
           return;
         }
         params.searchText = dom.byId("txtAddress").value;
-        // The execute() performs a LIKE SQL query based on the provided text value
+        // The execute() performs a LIKE SQL (FindTask) query based on the provided text value
         // showResults() is called once the promise returned here resolves
         // find.execute(params).then(showResults, rejectedPromise);
 
         find.execute(params)
           .then(doGeoQuery)
           .otherwise(rejectedPromise);
-          //debugger;
       }
 
+
+
+      // Called if the Promise Resolves for the FindTask "find"
       function doGeoQuery(response) {
+
+        //Empty the HTML table from previous results
+        resultsTable.innerHTML = "";
+        // Setup HTML table for new results
+        // Set up row for descriptive headers to display results
+        var topRow = resultsTable.insertRow(0);
+        var cell1 = topRow.insertCell(0);
+        var cell2 = topRow.insertCell(1);
+        var cell3 = topRow.insertCell(2);
+        
+        cell1.innerHTML = "<b>Address</b>";
+        cell2.innerHTML = "<b>Record Number</b>";
+        cell3.innerHTML = "<b>Jurisdiction</b>";
+        
         // "response.results" is the data object containing fields and geometry from the found feature
+        // empty the array from previous results
         resultsarray = [];
         var results = response.results;
-        // If no results are returned from the task, notify the user
+        // If no results are returned from the FindTask "find", notify the user
         if (results.length === 0) {
           resultsTable.innerHTML = "<i>No results found</i>";
           loadingImg.style.visibility = "hidden";
           return;
         }
+        
+        // Performs Spatial Query and writes results for each result returned from the FindTask "find"
         arrayUtils.forEach(results, function(findResult, i) {
-          resultsarray.length = 0;
-          // Get each value of the desired attributes
+          // Get each value of the desired attributes from the FindTask "find"
           var geo = findResult.feature.geometry;
           var adr = findResult.feature.attributes.ADDRESS;
           var recnum = findResult.feature.attributes.RECNUM;
-          //resultsarray.push(adr);
-          //resultsarray.push(recnum);
-          //console.log("geo",geo);
-          //console.log("adr",adr);
-          //console.log("recnum",recnum);
+          
+          //Setup Spatial Query
           var spatialquery = new Query();
           spatialquery.outFields = ["CITY"];
           spatialquery.geometry = geo;
           spatialquery.spatialRelationship = "intersects";
-          // execute QueryTask
+          
+          // execute QueryTask for Spatial Query
           qt.execute(spatialquery).then(function(spatialresults) {
-            //console.log("spatialresults.features", spatialresults.features);
+            // grab attribute from spatial query 
+            var city = spatialresults.features[0].attributes.CITY;
+            //push results to array
             resultsarray.push(adr);
             resultsarray.push(recnum);
-            resultsarray.push(spatialresults.features[0].attributes.CITY);
-            //resultsarray.push(spatialresults.features[0].attributes.PIN);
-            //console.log("resultsarrayloop",resultsarray);
-            //debugger;
-            resultsTable.innerHTML = "";
+            resultsarray.push(city);
 
             // If no results are returned from the task, notify the user
             if (resultsarray.length === 0) {
@@ -94,66 +111,38 @@
               loadingImg.style.visibility = "hidden";
               return;
             }
-            //console.log("resutls",results);
 
-            // Set up row for descriptive headers to display results
-            var topRow = resultsTable.insertRow(0);
-            var cell1 = topRow.insertCell(0);
-            var cell2 = topRow.insertCell(1);
-            var cell3 = topRow.insertCell(2);
-            //var cell4 = topRow.insertCell(3);
-            //var cell5 = topRow.insertCell(4);
-            cell1.innerHTML = "<b>Address</b>";
-            cell2.innerHTML = "<b>Record Number</b>";
-            cell3.innerHTML = "<b>Jurisdiction</b>";
-            //cell4.innerHTML = "<b>PIN</b>";
-            //cell5.innerHTML = "<b>geometry</b>";
-
-            //console.log("resultsarray",resultsarray);
-
-            // Loop through each result in the response and add as a row in the table
-            var n = 0;
-            arrayUtils.forEach(results, function(printResult, i) {
-              // Get each value of the desired attributes
-              var adr = resultsarray[n];
-              n++;
-              var recnum = resultsarray[n];
-              n++;
-              var city = resultsarray[n];
-              n++;
-              //var pin = resultsarray[n];
-              //n++;
-
-
-              // Add each resulting value to the table as a row
-              var row = resultsTable.insertRow(i + 1);
-              var cell1 = row.insertCell(0);
-              var cell2 = row.insertCell(1);
-              var cell3 = row.insertCell(2);
-              //var cell4 = row.insertCell(3);
-              //var cell5 = row.insertCell(4);
-              cell1.innerHTML = adr;
-              cell2.innerHTML = recnum;
-              cell3.innerHTML = city;
-              //cell4.innerHTML = pin;
-              //cell5.innerHTML = geo;
-              loadingImg.style.visibility = "hidden";
-            });
+            // Write html table underneath header row
+            var i = 1;
+            // Add each resulting value to the table as a new row, and create cells
+            var row = resultsTable.insertRow(i);
+            var cell1 = row.insertCell(0);
+            var cell2 = row.insertCell(1);
+            var cell3 = row.insertCell(2);
+            // Assign values to cells
+            cell1.innerHTML = adr;
+            cell2.innerHTML = recnum;
+            cell3.innerHTML = city;
+            // hide loading gif
+            loadingImg.style.visibility = "hidden";
+            i++;
           })
         });
       }
-
+      
+      // Assign results table to the html table by ID
       var resultsTable = dom.byId("tblAddress");
 
       // Executes each time the promise from find.execute() is rejected.
       function rejectedPromise(err) {
         console.error("Promise didn't resolve: ", err.message);
-        debugger;
       }
 
+      // methods to execute the function
       // Run doFind() when button is clicked
       on(dom.byId("btnFind"), "click", doFind);
-      //Run doFind() when "enter" is pressed on keyboard
+
+      // "Clicks" btnFind when "Enter" is pressed on keyboard, thereby running doFind()
       document.getElementById('txtAddress').addEventListener('keypress', function(event) {
         if (event.keyCode == 13) {
             document.getElementById('btnFind').click();
